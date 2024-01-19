@@ -60,11 +60,11 @@ func (ls *LetStatement) String() string {
 
 	if ls.Value != nil {
 		out.WriteString(ls.Value.String())
-
-		out.WriteString(";")
-
-		return out.String()
 	}
+	
+	out.WriteString(";")
+
+	return out.String()
 }
 
 type Identifier struct {
