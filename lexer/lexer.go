@@ -3,10 +3,10 @@ package lexer
 import "gobook/token"
 
 type Lexer struct {
-	input 	string
-	position int // current position in input (points to current char)
-	readPosition int // current reading position in input (after current char)
-	ch byte // current char under examination
+	input        string
+	position     int  // current position in input (points to current char)
+	readPosition int  // current reading position in input (after current char)
+	ch           byte // current char under examination
 }
 
 func New(input string) *Lexer {
@@ -63,9 +63,16 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LBRACE, l.ch)
 	case '}':
 		tok = newToken(token.RBRACE, l.ch)
+	case '"':
+		tok.Type = token.STRING
+		tok.Literal = l.readString()
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
+	case '[':
+		tok = newToken(token.LBRACKET, l.ch)
+	case ']':
+		tok = newToken(token.RBRACKET, l.ch)
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
@@ -135,4 +142,15 @@ func (l *Lexer) readChar() {
 	}
 	l.position = l.readPosition
 	l.readPosition += 1
+}
+
+func (l *Lexer) readString() string {
+	position := l.position + 1
+	for {
+		l.readChar()
+		if l.ch == '"' || l.ch == 0 {
+			break
+		}
+	}
+	return l.input[position:l.position]
 }
