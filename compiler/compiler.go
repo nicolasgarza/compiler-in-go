@@ -236,6 +236,13 @@ func (c *Compiler) Bytecode() *Bytecode {
 	}
 }
 
+func NewWithState(s *SymbolTable, constants []object.Object) *Compiler {
+	compiler := New()
+	compiler.symbolTable = s
+	compiler.constants = constants
+	return compiler
+}
+
 type Bytecode struct {
 	Instructions code.Instructions
 	Constants    []object.Object
