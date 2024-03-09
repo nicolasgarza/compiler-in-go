@@ -162,6 +162,11 @@ func testConstants(
 				return fmt.Errorf("constant %d - testIntegerObject failed: %s",
 					i, err)
 			}
+		case string:
+			err := testStringObject(constant, actual[i])
+			if err != nil {
+				return fmt.Errorf("constant %d - testStringObject failed: %s", i, err)
+			}
 		}
 	}
 
@@ -181,6 +186,13 @@ func testIntegerObject(expected int64, actual object.Object) error {
 	}
 
 	return nil
+}
+
+func testStringObject(expected string, actual object.Object) error {
+	result, ok := actual.(*object.String)
+	if !ok {
+		return fmt.Errof("object i snot String. got=%T (%+v)", actual, actual)
+	}
 }
 
 func TestBooleanExpressions(t *testing.T) {
@@ -376,5 +388,30 @@ func TestGlobalLetStatements(t *testing.T) {
 			},
 		},
 	}
+	runCompilerTests(t, tests)
+}
+
+func TestStringExpressions(t *testing.T) {
+	tests := []compilerTestCase {
+		{
+			input: `"monkey"`,
+			expectedConstants: []interface{}{"monkey"},
+			expectedInstructions: []code.Instructions{
+			code.Make(code.OpConstant, 0),
+			code.Make(code.OpPop),
+			},
+			},
+			{
+			input: `"mon" + "key"`,
+			expectedConstants: []interface{}{"mon", "key"},
+			expectedInstructions: []code.Instructions{
+			code.Make(code.OpConstant, 0),
+			code.Make(code.OpConstant, 1),
+			code.Make(code.OpAdd),
+			code.Make(code.OpPop),
+			},
+			},			
+	}
+
 	runCompilerTests(t, tests)
 }
