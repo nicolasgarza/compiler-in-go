@@ -137,8 +137,6 @@ func (vm *VM) executeBinaryOperation(op code.Opcode) error {
 			leftType, rightType)
 	}
 
-	return fmt.Errorf("unsupported types for binary operation: %s %s",
-		leftType, rightType)
 }
 
 func (vm *VM) executeComparison(op code.Opcode) error {

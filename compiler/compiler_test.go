@@ -191,8 +191,15 @@ func testIntegerObject(expected int64, actual object.Object) error {
 func testStringObject(expected string, actual object.Object) error {
 	result, ok := actual.(*object.String)
 	if !ok {
-		return fmt.Errof("object i snot String. got=%T (%+v)", actual, actual)
+		return fmt.Errorf("object i snot String. got=%T (%+v)", actual, actual)
 	}
+
+	if result.Value != expected {
+		return fmt.Errorf("object has wrong value. got=%q, want=%q",
+			result.Value, expected)
+	}
+
+	return nil
 }
 
 func TestBooleanExpressions(t *testing.T) {
@@ -392,25 +399,25 @@ func TestGlobalLetStatements(t *testing.T) {
 }
 
 func TestStringExpressions(t *testing.T) {
-	tests := []compilerTestCase {
+	tests := []compilerTestCase{
 		{
-			input: `"monkey"`,
+			input:             `"monkey"`,
 			expectedConstants: []interface{}{"monkey"},
 			expectedInstructions: []code.Instructions{
-			code.Make(code.OpConstant, 0),
-			code.Make(code.OpPop),
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpPop),
 			},
-			},
-			{
-			input: `"mon" + "key"`,
+		},
+		{
+			input:             `"mon" + "key"`,
 			expectedConstants: []interface{}{"mon", "key"},
 			expectedInstructions: []code.Instructions{
-			code.Make(code.OpConstant, 0),
-			code.Make(code.OpConstant, 1),
-			code.Make(code.OpAdd),
-			code.Make(code.OpPop),
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpAdd),
+				code.Make(code.OpPop),
 			},
-			},			
+		},
 	}
 
 	runCompilerTests(t, tests)
