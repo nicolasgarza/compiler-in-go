@@ -188,6 +188,9 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 		return unwrapReturnValue(evaluated)
 
 	case *object.Builtin:
+		if result := fn.Fn(args...); result != nil {
+			return result
+		}
 		return fn.Fn(args...)
 
 	default:
